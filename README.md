@@ -15,15 +15,22 @@ The inclusion of Mubeng for proxy rotation underscores the project's simplicity 
 
 ## Environment Setup
 
-Configure the `.env` file within the project directory. Here’s what each variable means:
+Configure the `.env` file within the project directory. Here's a detailed explanation of each variable:
 
-- `VPN_LOCATION`: Specifies the chosen .ovpn file from the `ovpn_list`.
-- `VPN_PROVIDER`: Identifies the VPN service provider, either internal or external.
-- `STARTING_PORT`: Designates the starting port for the proxy service in single mode or batch mode.
-- `VPN_USERNAME`: Your VPN account username.
-- `VPN_PASSWORD`: The corresponding VPN account password.
-- `CONTAINER_RESTART`: Docker container restart policy (e.g., always, unless-stopped).
-- `NETWORK_CIDR`: The CIDR block of your host network (e.g., 192.168.0.0/24).
+- `VPN_LOCATION`: Set to "list" to specify the use of a predefined list of VPN locations from the `ovpn_list`.
+- `VPN_PROVIDER`: Identifies the VPN service provider, set to "SURFSHARK" for this project.
+- `STARTING_PORT`: Designates the starting port for the proxy service; begins at 8900 for sequential port assignment.
+- `VPN_USERNAME`: Your VPN account username, e.g., "user".
+- `VPN_PASSWORD`: The corresponding VPN account password, e.g., "pass".
+- `CONTAINER_RESTART`: Docker container restart policy, set to "unless-stopped" to ensure containers restart unless manually stopped.
+- `NETWORK_CIDR`: The CIDR block of your host network, set to "172.16.1.0/24" for this project.
+- `CONFIG_PATH`: The path to the VPN configuration files, set to "/tmp/Ovpn-To-Proxy-Adapter/conf/".
+- `MUBENG_PORT`: The port number on which Mubeng operates, set to "7070" for this project.
+- `PROXIES_PATH`: The path where proxy lists are saved, set to "/tmp/Ovpn-To-Proxy-Adapter/proxies".
+- `MUBENG_METHOD`: The method Mubeng uses for proxy rotation, set to "sequent" for sequential rotation.
+- `MUBENG_ROTATE`: Controls how frequently Mubeng rotates proxies, with "1" indicating rotation after every request.
+
+These configurations ensure your Shark-Rotate setup is tailored to utilize Surfshark VPNs, with each component working together to provide a robust rotating proxy service.
 
 ## Execution
 
