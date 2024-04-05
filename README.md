@@ -107,7 +107,11 @@ Output examples demonstrating the proxy rotation, with each request emanating fr
 }
 
 
+
 ```
+
+![Burp](config-files/image-burp.png)
+
 
 Each response reflects a different geographic location, validating the operational efficacy of Shark-Rotate’s proxy rotation.
 
