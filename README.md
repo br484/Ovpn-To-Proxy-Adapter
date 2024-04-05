@@ -1,5 +1,9 @@
 # Shark-Proxy-Rotate 
 
+<div align="center">
+    <img src="config-files/image.png" alt="alt text" width="200"/>
+</div>
+
 ## Description
 
 Shark-Proxy-Rotate, previously Ovpn-To-Proxy-Adapter, enhances the brilliant foundational work of the original by DoganM95. This project extends its functionality to support a rotating proxy mechanism, crucial for scenarios requiring each outbound request to navigate through a distinct proxy. This adaptation allows for dynamic selection of any VPN configuration from the `config-files` directory, leveraging Surfshark credentials, to establish a VPN connection. The flexibility to choose any .ovpn file facilitates seamless connectivity across a wide array of global locations, ensuring users can bypass IP bans effectively, with minimal setup.
