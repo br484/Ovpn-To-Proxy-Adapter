@@ -95,6 +95,16 @@ Output examples demonstrating the proxy rotation, with each request emanating fr
 
 ```
 
+### Batch Proxy Creation
+
+For batch proxy creation, where you want to create multiple proxies for different locations as listed in your `ovpn_list`, ensure the `VPN_LOCATION` variable in your `.env` file is set to `list`, and your `ovpn_list` file is populated with your desired VPN locations, such as:
+
+```plaintext
+jp-tok-st014.prod.surfshark.com_udp.ovpn
+ua-iev.prod.surfshark.com_udp.ovpn
+us-nyc.prod.surfshark.com_tcp.ovpn
+```
+
 Each response reflects a different geographic location, validating the operational efficacy of Shark-Rotate’s proxy rotation.
 
 Shark-Proxy-Rotate offers an efficient, streamlined solution for managing and rotating proxies, harnessing Surfshark VPN configurations, and enhancing user anonymity and access capabilities across the digital landscape.
