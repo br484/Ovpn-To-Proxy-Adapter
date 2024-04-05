@@ -24,9 +24,9 @@ Configure the `.env` file within the project directory. Here's a detailed explan
 - `VPN_PASSWORD`: The corresponding VPN account password, e.g., "pass".
 - `CONTAINER_RESTART`: Docker container restart policy, set to "unless-stopped" to ensure containers restart unless manually stopped.
 - `NETWORK_CIDR`: The CIDR block of your host network, set to "172.16.1.0/24" for this project.
-- `CONFIG_PATH`: The path to the VPN configuration files, set to "/tmp/Ovpn-To-Proxy-Adapter/conf/".
-- `MUBENG_PORT`: The port number on which Mubeng operates, set to "7070" for this project.
-- `PROXIES_PATH`: The path where proxy lists are saved, set to "/tmp/Ovpn-To-Proxy-Adapter/proxies".
+- `CONFIG_PATH`: The full path to the VPN configuration files.
+- `MUBENG_PORT`: The port number on which Mubeng operates.
+- `PROXIES_PATH`: The full path where proxy lists are saved.
 - `MUBENG_METHOD`: The method Mubeng uses for proxy rotation, set to "sequent" for sequential rotation.
 - `MUBENG_ROTATE`: Controls how frequently Mubeng rotates proxies, with "1" indicating rotation after every request.
 
