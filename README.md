@@ -32,6 +32,16 @@ Configure the `.env` file within the project directory. Here's a detailed explan
 
 These configurations ensure your Shark-Rotate setup is tailored to utilize Surfshark VPNs, with each component working together to provide a robust rotating proxy service.
 
+### Batch Proxy Creation
+
+For batch proxy creation, where you want to create multiple proxies for different locations as listed in your `ovpn_list`, ensure the `VPN_LOCATION` variable in your `.env` file is set to `list`, and your `ovpn_list` file is populated with your desired VPN locations, such as:
+
+```plaintext
+jp-tok-st014.prod.surfshark.com_udp.ovpn
+ua-iev.prod.surfshark.com_udp.ovpn
+us-nyc.prod.surfshark.com_tcp.ovpn
+```
+
 ## Execution
 
 To initiate Shark-Rotate, execute the `spawn.sh` script with superuser permissions:
@@ -48,7 +58,7 @@ To illustrate the rotating proxy feature, run the following loop, making request
 
 ```bash
 while true; do
-    curl -x http://172.16.1.9:7070 http://ip-api.com/;
+    curl -x http://PROXY-IP:MUBENG_PORT http://ip-api.com/;
 done
 ```
 
@@ -93,16 +103,6 @@ Output examples demonstrating the proxy rotation, with each request emanating fr
 }
 
 
-```
-
-### Batch Proxy Creation
-
-For batch proxy creation, where you want to create multiple proxies for different locations as listed in your `ovpn_list`, ensure the `VPN_LOCATION` variable in your `.env` file is set to `list`, and your `ovpn_list` file is populated with your desired VPN locations, such as:
-
-```plaintext
-jp-tok-st014.prod.surfshark.com_udp.ovpn
-ua-iev.prod.surfshark.com_udp.ovpn
-us-nyc.prod.surfshark.com_tcp.ovpn
 ```
 
 Each response reflects a different geographic location, validating the operational efficacy of Shark-Rotate’s proxy rotation.
