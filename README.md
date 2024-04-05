@@ -1,148 +1,93 @@
-# Intro
+# Shark-Proxy-Rotate 
 
-Creates proxy servers for locations listed by a VPN provider, e.g. ExpressVPN, Surfshark, etc. 
-Each (OpenVPN) location translates into a seperate docker container. The OpenVPN to Proxy conversion is provided by [haugene/docker-transmission-openvpn](https://github.com/haugene/docker-transmission-openvpn).
+## Description
 
-## Features
+Shark-Proxy-Rotate, previously Ovpn-To-Proxy-Adapter, enhances the brilliant foundational work of the original by DoganM95. This project extends its functionality to support a rotating proxy mechanism, crucial for scenarios requiring each outbound request to navigate through a distinct proxy. This adaptation allows for dynamic selection of any VPN configuration from the `config-files` directory, leveraging Surfshark credentials, to establish a VPN connection. The flexibility to choose any .ovpn file facilitates seamless connectivity across a wide array of global locations, ensuring users can bypass IP bans effectively, with minimal setup.
 
-- Deletes transmission-ovpn containers which have `status=created` and are non functional
-- Iterates over ports, until a free one is found to run a proxy container on in batch mode
-- Supports many vpn providers, see the full list at [vpn-configs-contrib](https://github.com/haugene/vpn-configs-contrib).
-- Configurable `docker run --restart` argument
+The inclusion of Mubeng for proxy rotation underscores the project's simplicity and efficiency, eliminating the need for extensive configuration. Mubeng's two core functionalities:
+1. Proxy server operation with IP rotation, circumventing IP bans like brute-force defenses, API rate-limits, and WAF IP blockades.
 
-## Setup
+## Prerequisites
 
-- Copy `spawn.sh` from this repo to destination machine (linux)
-- Retrieve the username & password, which are usually not the vpn login credentials, but special ones created by the provider, shown when choosing manual setup e.g.
-  -  [ExpressVPN](https://www.expressvpn.com/setup#manual)
-  -  [Surfshark](https://my.surfshark.com/vpn/manual-setup/main/openvpn)
-- If only one location should be translated into a proxy server
-  - Head over to [vpn-configs-contrib](https://github.com/haugene/vpn-configs-contrib/tree/main/openvpn)
-  - Find the folder of the vpn provider used
-  - Copy the name of the server needed
-  - Skip to the Usage part
-- If many proxies need to be created at once, create a file called `ovpn_list` in the same directory as the script
-  - Copy each needed location's name into the `ovpn_list`
+- Docker
+- dos2unix (to convert VPN list files to Unix format)
+- Docker Compose is optional but recommended for easier management of Docker applications.
 
-## Usage
+## Environment Setup
 
-### Notes
+Configure the `.env` file within the project directory. Here’s what each variable means:
 
-- The `.ovpn` file to use is not provided as file, but as a name (string). The Transmission-service fetches the corresponding file and handles the rest 
-- The vpn providers supported are listed at [vpn-configs-contrib](https://github.com/haugene/vpn-configs-contrib)
-- The script parameters for `spawn.sh` below must be entered in the same order as listed
-- When creating a proxy, the `.ovpn` can be added also, it will be removed by the script anyway
-- Batch craeting with restart argument `on-failure:5` is recommended, as non-functional vpn's won't constantly try to restart but stay stopped
-- If the proxy container needs to be used by another container X:
-  - Add `172.17.0.0/24` to the network parameter of the shell script, e.g. `sudo ./spawn.sh ... 172.17.0.0/24,192.168.0.0/24` 
-  - Run a shell inside the container X using `docker exec -it <container_id_of_x> /bin/sh`
-  - Try to reach the docker host from within container X using `ping -c 4 host.docker.internal`
-    - If it says `ping: bad address 'host.docker.internal'`, add this to container X's run command: `--add-host=host.docker.internal:host-gateway` and resart it
-    - If it (now) says e.g. `PING host.docker.internal (172.17.0.1): 56 data bytes`, the host and other containers can now be reached from inside of container X
-    - Use `host.docker.internal` as the hostname and the proxy containers port to use the proxy
+- `VPN_LOCATION`: Specifies the chosen .ovpn file from the `ovpn_list`.
+- `VPN_PROVIDER`: Identifies the VPN service provider, either internal or external.
+- `STARTING_PORT`: Designates the starting port for the proxy service in single mode or batch mode.
+- `VPN_USERNAME`: Your VPN account username.
+- `VPN_PASSWORD`: The corresponding VPN account password.
+- `CONTAINER_RESTART`: Docker container restart policy (e.g., always, unless-stopped).
+- `NETWORK_CIDR`: The CIDR block of your host network (e.g., 192.168.0.0/24).
 
-### Script parameters
+## Execution
 
-  - `vpn_location`: The desired line chosen from the `ovpn_list`
-  - `vpn_provider`: The company of the service used (Internal or External), full list [here](https://haugene.github.io/docker-transmission-openvpn/supported-providers/#internal_providers)
-  - `starting_port`: The port on which the proxy should serve in single mode, and where it should start iterating in batch mode (see Features)
-  - `vpn_username`: The expressvpn username which you kept handy (see setup above)
-  - `vpn_password`: The corresponding password
-  - `container_restart`: The docker run restart behaviour like `always`, `unless-stopped`, etc, see [documentation](https://docs.docker.com/config/containers/start-containers-automatically/)
-  - `network_cidr`: The host network's range, e.g. `192.168.0.0/24`
+To initiate Shark-Rotate, execute the `spawn.sh` script with superuser permissions:
 
-### Single proxy creation
-
-```shell
-sudo ./spawn.sh \
-    <vpn_location> \
-    <vpn_provider> \
-    <starting_port> \
-    <vpn_username> \
-    <vpn_password> \
-    <container_restart> \
-    <network_cidr>
+```bash
+sudo ./spawn.sh
 ```
 
-#### Example:
+This script dynamically generates Docker containers for each specified VPN connection, maps them to HTTP proxies, and leverages Mubeng to facilitate proxy rotation.
 
-Create a proxy server, which connects to "Hong Kong - 2" and be available on port 8900:
+## Usage Example
 
-```shell
-sudo ./spawn.sh \
-    my_expressvpn_hong_kong_-_2_udp.ovpn \
-    EXPRESSVPN \
-    8900 \
-    y7v1wwy6wg5vh8s9jfn2sj3c \
-    ixay8f10fdljm31zks09x287 \
-    always \
-    192.168.0.0/24
+To illustrate the rotating proxy feature, run the following loop, making requests through Mubeng, ensuring each traverses a different proxy:
+
+```bash
+while true; do
+    curl -x http://172.16.1.9:7070 http://ip-api.com/;
+done
 ```
 
-### Multi proxy creation (batch)
+Output examples demonstrating the proxy rotation, with each request emanating from a unique IP address:
 
-```shell
-sudo ./spawn.sh \
-    list \
-    <vpn_provider> \
-    <starting_port> \
-    <vpn_username> \
-    <vpn_password> \
-    <container_restart> \
-    <network_cidr>
+```json
+{
+  "status": "success",
+  "country": "Canada",
+  "city": "Toronto",
+  "query": "45.136.154.250"
+}
+{
+  "status": "success",
+  "country": "United States",
+  "city": "Denver",
+  "query": "169.150.231.195"
+}
+{
+  "status": "success",
+  "country": "United States",
+  "city": "Chicago",
+  "query": "138.199.42.185"
+}
+{
+  "status": "success",
+  "country": "Sri Lanka",
+  "city": "Sri Lanka",
+  "query": "62.197.156.37"
+}
+{
+  "status": "success",
+  "country": "Slovenia",
+  "city": "Ljubljana",
+  "query": "195.158.249.26"
+}
+{
+  "status": "success",
+  "country": "Uruguay",
+  "city": "Montevideo",
+  "query": "212.119.32.35"
+}
+
+
 ```
 
-#### Example:  
+Each response reflects a different geographic location, validating the operational efficacy of Shark-Rotate’s proxy rotation.
 
-If `ovpn_list` file contains
-
-```text
-jp-tok-st014.prod.surfshark.com_udp.ovpn
-ua-iev.prod.surfshark.com_udp.ovpn
-us-nyc.prod.surfshark.com
-```
-
-Then the following would create 3 proxy servers, one for each location. First (Japan) would listen on port 8900, Second (Ukraine) on port 8901, etc.
-
-```shell
-sudo ./spawn.sh \
-    list \
-    SURFSHARK \
-    8900 \
-    someone@something.com \
-    8x5o60nz22gll9o8qsf63to2 \
-    on-failure:5 \
-    192.168.0.0/24
-```
-
-## Useful docker commands
-
-### Stop all openvpn containers
-
-```shell
-docker ps -a --format "{{.Names}}" | grep "openvpn" | xargs -r -I {} docker stop {}
-```
-
-### Stop and remove all openvpn containers
-
-```shell
-docker ps -a --format "{{.Names}}" | grep "openvpn" | xargs -r -I {} docker rm -f {}
-```
-
-### Remove only stopped openvpn containers
-
-```shell
-docker ps -a --filter "status=exited" --format "{{.ID}} {{.Names}}" | grep openvpn | cut -d ' ' -f1 | xargs docker rm -f
-```
-
-### Shell into the container (if only one is running)
-
-```shell
-docker exec -it $(docker ps -a --format '{{.Names}}' | grep 'openvpn' | head -n 1) /bin/sh
-```
-
-### Show logs of the container (in only one is running)
-
-```shell
-docker logs $(docker ps -a --format '{{.Names}}' | grep 'openvpn' | head -n 1)
-```
+Shark-Proxy-Rotate offers an efficient, streamlined solution for managing and rotating proxies, harnessing Surfshark VPN configurations, and enhancing user anonymity and access capabilities across the digital landscape.
