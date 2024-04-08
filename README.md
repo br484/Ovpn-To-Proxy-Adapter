@@ -1,7 +1,7 @@
 # Shark-Proxy-Rotate 
 
 <div align="center">
-    <img src="config-files/image.png" alt="alt text" width="200"/>
+    <img src="images/shark-rotate.png" alt="alt text" width="200"/>
 </div>
 
 ## Description
@@ -110,7 +110,7 @@ Output examples demonstrating the proxy rotation, with each request emanating fr
 
 ```
 
-![Burp](config-files/image-burp.png)
+![Burp](images/image-burp.png)
 
 
 Each response reflects a different geographic location, validating the operational efficacy of Shark-Rotate’s proxy rotation.
